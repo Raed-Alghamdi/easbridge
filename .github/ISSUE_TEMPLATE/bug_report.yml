@@ -1,0 +1,53 @@
+name: Bug report
+description: Something does not work as the documentation says.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. Please remove passwords, tokens, addresses and message content from everything you paste.
+        For a security problem, do not use this form: see SECURITY.md.
+  - type: input
+    id: version
+    attributes:
+      label: EASBridge version
+      description: The output of `docker exec easbridge /easbridge version`, or the image tag.
+    validations:
+      required: true
+  - type: input
+    id: exchange
+    attributes:
+      label: Exchange version
+      description: For example "Exchange 2019 CU14, on premises, behind a load balancer". Say if you do not know.
+    validations:
+      required: true
+  - type: input
+    id: mailflow
+    attributes:
+      label: MailFlow version (or the other client)
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened, and what you expected
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs with secrets removed
+      description: |
+        `docker compose logs easbridge`, and the output of `easbridge probe --trace` if the problem is about Exchange.
+        EASBridge does not log passwords, subjects or addresses, but check before you paste.
+      render: text
+  - type: textarea
+    id: config
+    attributes:
+      label: Configuration
+      description: The `EASBRIDGE_*` variables you set, with the URL host and the logins replaced by examples.
+      render: text

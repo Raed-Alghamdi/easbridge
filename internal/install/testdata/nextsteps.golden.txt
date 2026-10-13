@@ -1,0 +1,38 @@
+Next steps
+
+ To type less, tell Compose once per shell which files to use; then plain "docker compose up -d", "docker compose logs easbridge"
+ and so on work, without the -f flags below:
+
+      export COMPOSE_FILE=docker-compose.yml:docker-compose.easbridge.yml
+
+ 1. Optional, first contact with Exchange. Run it before step 2: the probe and the service share
+    /data. It asks for the mailbox password without echoing it, and tells you at once if Exchange
+    refuses the device, the login or the URL:
+
+      docker compose -f docker-compose.yml -f docker-compose.easbridge.yml run --rm easbridge probe --user you@example.com
+
+ 2. Start EASBridge. MailFlow's backend starts after it is healthy and trusts its certificate:
+
+      docker compose -f docker-compose.yml -f docker-compose.easbridge.yml up -d
+
+ 3. In MailFlow, as an administrator: Settings > Security & Integrations > Security > Mail Server
+    Connection Policy > turn on "Allow private / local hosts" (MailFlow refuses a mail server at
+    a private address until you do, and EASBridge is one).
+
+ 4. In MailFlow: Settings > Account & Mail > Accounts > "Add account" > "Custom", then:
+      Display name              any name you like (MailFlow requires it)
+      Email address             your mailbox address
+      Username (IMAP login)     you@example.com
+      Password / App password   the mailbox password
+      IMAP Settings   IMAP Host: easbridge   Port: 993
+      SMTP Settings   SMTP Host: easbridge   Port: 465
+    MailFlow uses TLS on ports 993 and 465 and verifies the certificate with the CA of step 2: leave
+    "Skip TLS certificate verification" off (it is not even shown unless the administrator allows it).
+
+ 5. Contacts: Settings > Security & Integrations > Integrations > "Apps" > "CardDAV Contacts":
+      Server URL      https://easbridge:8443/
+      Username        you@example.com
+      App password    the same mailbox password
+    then "Connect".
+
+More: INSTALL.md (upgrading, uninstalling, troubleshooting).

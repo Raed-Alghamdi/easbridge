@@ -1,0 +1,10 @@
+.git
+.cache
+.toolchain
+bin
+compat/node_modules
+**/*.db
+**/*.db-wal
+**/*.db-shm
+.env
+cmd/easbridge/easbridge

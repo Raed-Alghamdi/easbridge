@@ -1,0 +1,77 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  go:
+    name: Go checks
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: go.mod
+          cache: false
+      - name: gofmt
+        run: test -z "$(gofmt -l cmd internal third_party compat/genpki)"
+      - name: vet, both tag sets and the vendored library
+        run: make vet
+      - name: tests, production tags
+        run: make test
+      - name: tests, devfake tag
+        run: make test-devfake
+      - name: tests, vendored library
+        run: make test-vendored
+      - name: the production binary has no fake upstream
+        run: make check-prod
+      - name: the generated compose file merges with MailFlow's (must not be skipped)
+        run: |
+          go test -count=1 -v -run TestTheOverrideMergesWithMailFlows390ComposeFiles ./cmd/easbridge | tee merge.log
+          if grep -q -- '--- SKIP' merge.log; then echo "the compose merge test was skipped"; exit 1; fi
+      - name: govulncheck
+        run: make vulncheck
+
+  compat:
+    name: Compatibility (imapflow, nodemailer, MailFlow's CardDAV client)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: go.mod
+          cache: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "22"
+      - run: make compat
+
+  e2e:
+    name: End to end in Docker
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "22"
+      - run: make e2e
+        env:
+          # Fail the job if Docker turns out to be unusable instead of skipping.
+          EASBRIDGE_E2E_REQUIRED: "1"

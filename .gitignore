@@ -1,0 +1,15 @@
+# Go toolchain and caches kept inside the checkout (env.sh)
+.toolchain/
+.cache/
+
+# Build outputs
+/bin/
+/cmd/easbridge/easbridge
+
+# Local state and secrets
+*.db
+.env
+
+# Test-only downloads
+compat/node_modules/
+compat/.mailflow-cache/

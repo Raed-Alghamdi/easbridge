@@ -1,0 +1,19 @@
+# A minimal stand-in for MailFlow's compose file, for `make e2e`: a `backend` service on a `mailflow`
+# network. The real thing is MailFlow 3.9.0's own file (cmd/easbridge/compose_merge_test.go merges the
+# override into that one); this one only has to run a small Node program as the backend.
+services:
+  backend:
+    image: node:22-alpine@sha256:0a7108bf6c7bf5de370ffb1a3ed6be93d405b43ff159f681a8d18c0e2bc2e402
+    working_dir: /app
+    command: ["node", "/app/backend.js"]
+    environment:
+      NODE_ENV: production
+    volumes:
+      - ./backend.js:/app/backend.js:ro
+      - ./node_modules:/app/node_modules:ro
+    networks:
+      - mailflow
+
+networks:
+  mailflow:
+    driver: bridge

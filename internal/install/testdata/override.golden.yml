@@ -1,0 +1,53 @@
+# Written by `easbridge init`. Use it together with MailFlow's compose file:
+#   docker compose -f <MailFlow's compose file> -f docker-compose.easbridge.yml up -d
+# It adds the easbridge service (no published ports, nothing writable but its two volumes) and makes
+# MailFlow's backend trust the certificate EASBridge makes for itself and start after it is healthy.
+services:
+  easbridge:
+    image: ghcr.io/example/easbridge:0.3.0
+    container_name: easbridge
+    restart: unless-stopped
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 1g
+    pids_limit: 256
+    ulimits:
+      core: 0
+    logging:
+      driver: json-file
+      options:
+        max-size: "50m"
+        max-file: "3"
+    # The image's own check (the binary asks its health endpoint; the image has no shell), run every 5 s
+    # so that MailFlow's backend, which waits for it, starts a few seconds after the bridge and not 30.
+    healthcheck:
+      test: ["CMD", "/easbridge", "healthcheck"]
+      interval: 5s
+      timeout: 5s
+      retries: 6
+      start_period: 15s
+    env_file:
+      - easbridge.env
+    environment:
+      EASBRIDGE_CA_EXPORT_DIR: /ca
+    volumes:
+      - easbridge-data:/data
+      - easbridge-ca:/ca
+    networks:
+      - mailflow
+
+  backend:
+    environment:
+      NODE_EXTRA_CA_CERTS: /easbridge-ca/ca.pem
+    volumes:
+      - easbridge-ca:/easbridge-ca:ro
+    depends_on:
+      easbridge:
+        condition: service_healthy
+
+volumes:
+  easbridge-data:
+  easbridge-ca:

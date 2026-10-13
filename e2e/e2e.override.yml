@@ -1,0 +1,13 @@
+# Only for `make e2e`: the devfake image has a fake Exchange inside, so no real server is involved; and
+# container names that cannot collide with a real install.
+services:
+  easbridge:
+    container_name: easbridge-e2e
+    environment:
+      EASBRIDGE_UPSTREAM: fake
+      EASBRIDGE_FAKE_PASSWORD: e2e-test-password-not-a-secret
+  backend:
+    container_name: easbridge-e2e-backend
+    environment:
+      E2E_USER: e2e@example.test
+      E2E_PASS: e2e-test-password-not-a-secret

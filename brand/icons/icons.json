@@ -1,0 +1,28 @@
+{
+  "name": "EASBridge",
+  "appId": "io.github.easbridge",
+  "bg": "#ffffff",
+  "web": true,
+  "linux": false,
+  "files": [
+    "web/icon.svg",
+    "web/icon-192.png",
+    "web/icon-512.png",
+    "web/icon-512-maskable.png",
+    "web/apple-touch-icon.png",
+    "web/favicon.ico",
+    "web/manifest.webmanifest",
+    "web/head.html",
+    "icon.svg"
+  ],
+  "pngDimensions": {
+    "web/icon-192.png": "192x192",
+    "web/icon-512.png": "512x512",
+    "web/icon-512-maskable.png": "512x512",
+    "web/apple-touch-icon.png": "180x180"
+  },
+  "notes": [
+    "favicon.ico via magick",
+    "oxipng applied to PNGs"
+  ]
+}
