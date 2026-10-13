@@ -87,7 +87,7 @@ default login). The directory domains default to the domains of every entry, inc
 
 The password is still checked by Exchange and the lockout budget stays per login (only a few unsuccessful verifications per login
 reach Exchange in a window, and a rejected password is refused locally for a while), so the exposure is: **anyone who can reach the bridge and has a login in that domain may try
-passwords through it**, rate limited per login but not per source. The README says so plainly next to the example.
+passwords through it**, rate limited per login but not per source. [SECURITY-MODEL.md](SECURITY-MODEL.md#who-can-sign-in-through-easbridge) says so plainly, and INSTALL.md repeats it next to the example.
 
 ## 4. The image's `/data`
 
@@ -103,7 +103,7 @@ one search a minute: 41 days) to years (4 characters) of searching and looks lik
 its next time (`EASBRIDGE_DIRECTORY_FULL_INTERVAL`), one log line (`directory sweep stopped for this run: the directory answers no query
 shorter than N characters ...`), and `/healthz` shows `sweep_infeasible: true` and `sweep_infeasible_length: N` in `directory_sweep`. No
 schema change: the condition is derived (idle with a calibrated length of 3 or more, which a sweep never leaves behind otherwise).
-The option stays off by default and the README marks it experimental.
+The option stays off by default and [CONTACTS.md](CONTACTS.md#the-full-directory-sweep-opt-in-experimental) marks it experimental.
 
 ## 6. Deviations and decisions
 
@@ -192,7 +192,7 @@ in MailFlow. Code: `internal/install` (the generated text, the checks of the com
 
 One constant: `internal/version.Image` (default `ghcr.io/raed-alghamdi/easbridge`), the tag is the build's version (`version.ImageRef()`).
 A build overrides it with `-ldflags -X easbridge/internal/version.Image=...` (`make IMAGE=...`, `docker build --build-arg IMAGE=...`), a
-run with `init --image`. Slice 5 confirms the final location; nothing else names it in the code (the docs do, in INSTALL.md and the README).
+run with `init --image`. Slice 5 confirms the final location; nothing else names it in the code (the docs do, in INSTALL.md, the README and CONFIGURATION.md).
 
 ### 8.2 `init`
 

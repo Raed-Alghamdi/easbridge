@@ -253,7 +253,7 @@ username and app password").
 
 - **Schema 6**, one appended migration: `contact_folders`, `contact_cards`, `directory_cards`, `directory_candidates`,
   `directory_state`. Version 0.1.8 cannot open a schema 6 database (it refuses a newer schema); rolling back needs the snapshot
-  taken before the upgrade. CHANGELOG and README say so.
+  taken before the upgrade. CHANGELOG and [OPERATIONS.md](OPERATIONS.md#limits) say so.
 - **Wipe.** A remote wipe and an account-only wipe delete the account's contact folders, cards, directory cards and candidates
   explicitly (secure delete), and then destroy the database as before.
 - **`/healthz`** gets counts only: per mailbox, whether the first download of each book is complete and its number of cards, the

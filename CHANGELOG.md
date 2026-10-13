@@ -17,6 +17,9 @@ A normal install now needs two values, the ActiveSync URL and the login. The des
   service_healthy`. A test merges it with MailFlow 3.9.0's `docker-compose.yml` and `docker-compose.ghcr.yml` with `docker compose config`.
 - `INSTALL.md`: requirements, the install step by step with MailFlow 3.9.0's own screen labels, the route without Compose, first-run
   checks, upgrading, uninstalling and troubleshooting by symptom.
+- The README is now a short front page. The detail moved to `docs/CONFIGURATION.md` (settings, TLS, listening addresses, device
+  identity, running the container by hand), `docs/OPERATIONS.md` (the probe, first sync, Bcc, health, limits), `docs/CONTACTS.md` and
+  `docs/SECURITY-MODEL.md`; `SECURITY.md` keeps the reporting policy.
 - **An automatic certificate.** With no certificate files provided, EASBridge makes a private CA (ECDSA P-256, valid 20 years, a unique
   name) and a server certificate (valid 2 years) in `/data/tls/` (directory `0700`, keys `0600`) at its first start, reuses them, and
   renews the server certificate from the same CA 60 days before it ends, while running. MailFlow trusts the CA once. The certificate names

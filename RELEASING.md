@@ -8,7 +8,8 @@ code, runs every check, and then builds and pushes the image. Everything before 
 1. **`main` is green.** The CI workflow passes on the commit you want to release (gofmt, vet, tests with and without `devfake`, the
    vendored library, `check-prod`, the compose merge test, `govulncheck`, `compat`, `e2e`).
 2. **Version.** `internal/version/version.go` (`Version`), `Makefile` (`VERSION ?=`) and `Dockerfile` (`ARG VERSION=`) say the new version;
-   `cmd/easbridge/dockerfile_test.go` fails if they differ. The image reference in the README and INSTALL.md (`IMAGE=...:X.Y.Z`) says it too.
+   `cmd/easbridge/dockerfile_test.go` fails if they differ. The image reference in the README and INSTALL.md (`IMAGE=...:X.Y.Z`) says it
+   too; the other documents write `<version>`.
 3. **`CHANGELOG.md`** has a `## [X.Y.Z]` entry that says what changed for someone who upgrades, including anything that needs a manual step
    (a new environment variable that changes a default, a schema change, a changed default port).
 4. **A copy of the data directory restores.** If the schema changed, upgrade a copy of a real data volume once and read the log.

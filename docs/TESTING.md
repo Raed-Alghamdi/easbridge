@@ -4,14 +4,14 @@ EASBridge speaks a protocol (Exchange ActiveSync) to a server that most contribu
 whose behaviour matters more than the specification. So the test strategy is a stack of stand-ins, each as strict as the thing it
 replaces, plus a rule that every surprise from the real server becomes a test.
 
-## The layers
+## The seven layers
 
 1. **Unit tests** for the pure parts: UID and UIDVALIDITY mapping, flag mapping, the SQLite store and its migrations (each migration is
    run on a copy of a database of the previous schema), MIME structure and ENVELOPE, address and header decoding in several charsets, vCard
-   writing, configuration parsing and validation, the certificate authority code, `init` and its generated files (golden files).
+   writing, configuration parsing and validation, the CA code, `init` and its generated files (golden files).
 2. **A fake upstream** (`internal/fakeupstream`, compiled only with the `devfake` build tag, so the production binary cannot contain
    it; `make check-prod` greps the binary for it). An in-memory Exchange with folders, items, sync keys, Ping, SendMail, contacts and a
-   searchable address list, that can inject new mail, flag changes, deletions, moves and failures (HTTP errors, throttling, status
+   searchable company directory, that can inject new mail, flag changes, deletions, moves and failures (HTTP errors, throttling, status
    codes), and be switched between behaviours the specification leaves open. The engine, the IMAP and SMTP servers and the CardDAV
    server are tested against it through real network connections.
 3. **A wire-level model of Exchange** (`internal/easupstream/*_test.go`). The real adapter and the vendored ActiveSync library talk WBXML
@@ -33,7 +33,7 @@ replaces, plus a rule that every surprise from the real server becomes a test.
    code are tested with hostile input (oversized structures, nesting, malformed XML, unusual methods).
 7. **Dependency checks.** `make vulncheck` runs a pinned `govulncheck` with a project-local cache.
 
-## Mutation checks
+## Mutation checks: would the tests notice a bug?
 
 A passing test suite says little about whether it would notice a bug. For each feature, a short list of deliberate bugs is applied one
 at a time (the line that enforces a rule is removed, inverted or weakened), the tests that should notice are run, and the change is
@@ -43,14 +43,18 @@ without `--force`. A mutation that survives means a missing test: one is written
 mutation survived at first, and each got its test. The lists are not kept as code; they are applied by a small script
 during development.
 
-## Mutation checks of the lockout and certificate rules
+## Mutation checks of the lockout and certificate rules: which rules are pinned?
 
-The lockout rules (what counts against a user's budget, what stops a session, what is bounded before a login is verified) and the
-certificate rules (the CA's name constraints, what is refused at start) are the parts where a silent weakening would not show in normal
-use, so each rule has a test that fails when the rule is removed: the constraints dropped or made non-critical, a name outside them
-accepted, two refusal look-alikes not stopping the engine, the first one not counted, the streak not reset, the account row made before
-verification, the source limit off, the maps unbounded, a throttled login counting as a failure. Node and OpenSSL enforce the CA's
-constraints too; `compat/` has Node refuse a leaf for another host name signed with the real CA key.
+The lockout rules and the certificate rules are the parts where a silent weakening would not show in normal use. The lockout rules
+cover what counts against a user's budget, what stops a session, and what is bounded before a login is verified. The certificate rules
+cover the CA's name constraints and what is refused at start. Each rule has a test that fails when the rule is removed:
+
+- the constraints dropped or made non-critical, or a name outside them accepted;
+- two refusal look-alikes not stopping the engine, the first one not counted, or the streak not reset;
+- the account row made before verification, the source limit off, or the maps unbounded;
+- a throttled login counting as a failure.
+
+Node and OpenSSL enforce the CA's constraints too; `compat/` has Node refuse a leaf for another host name signed with the real CA key.
 
 ## What a real Exchange taught it
 
@@ -83,12 +87,16 @@ ordinary use. Each was invisible to the layers above until the real server answe
    per-folder sync keys when the hierarchy is read from 0; both answers (it keeps them, it drops them) are handled with the existing
    silent key-reset path and are tested against both variants of the fake and the model.
 
-Things the specification leaves open and that are therefore **not known** until someone runs it against their server: whether the
-company address book answers one- and two-character queries (the full sweep depends on it, and stops itself if the shortest query it
-gets answered is three characters or more), how a given server reacts to hundreds of directory searches, and how a given organisation's
-device policy treats a device called `easbridge`.
+The specification leaves some things open, so they are **not known** until someone runs EASBridge against their server:
 
-## Running everything
+- whether the company directory answers one- and two-character queries (the full sweep depends on it, and stops itself if the
+  shortest query it gets answered is three characters or more);
+- how a given server reacts to hundreds of directory searches;
+- how a given organisation's device policy treats a device called `easbridge`.
+
+## How do I run the checks?
+
+Run these from the repository root (each target loads the project-local Go toolchain itself). Each command succeeds when it exits 0.
 
 ```
 make check      # vet (both tag sets), tests (both tag sets), vendored library tests, the production-binary check
