@@ -33,7 +33,7 @@ Every failed login counts against the Active Directory account lockout, so EASBr
 state below is in memory only; restarting the bridge clears it.
 
 - A password Exchange rejects (HTTP 401) is remembered as a salted hash and refused locally with `AUTHENTICATIONFAILED`. So is a
-  verification that failed for any other reason (a gateway's 403, a redirect, an HTML login page, a timeout), but that one is answered
+  verification that failed for a refusal look-alike (a gateway's 403, a redirect, an HTML login page), but that one is answered
   `NO [UNAVAILABLE]` (SMTP 454), because the password may well be right.
 - A hash that fails again is refused for longer each time: 15 minutes, 1 hour, 4 hours, then 24 hours. A different password or a
   success starts again.
@@ -78,8 +78,9 @@ names it was created for and private IP addresses (loopback, RFC 1918, unique-lo
 certificate for any other name, whoever signed it. The names and the reset procedure are in
 [CONFIGURATION.md](CONFIGURATION.md#automatic-certificate-the-default).
 
-The CA's key lives in the data volume (`/data/tls/ca-key.pem`, `0600`). Anyone who can read that volume can make certificates for any
-name that MailFlow, once it trusts the CA, will accept. Protect the volume like the database. Do not share the directory of the
+The CA's key lives in the data volume (`/data/tls/ca-key.pem`, `0600`). Anyone who can read that volume can make certificates that
+MailFlow, once it trusts the CA, accepts for the names and private address ranges the CA permits (not for other public names). Protect
+the volume like the database. Do not share the directory of the
 exported `ca.pem` as writable with anything else: the file holds only the public certificate, but a writable shared directory lets
 another container replace it.
 

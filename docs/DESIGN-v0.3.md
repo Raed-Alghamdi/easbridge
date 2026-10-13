@@ -87,7 +87,7 @@ default login). The directory domains default to the domains of every entry, inc
 
 The password is still checked by Exchange and the lockout budget stays per login (only a few unsuccessful verifications per login
 reach Exchange in a window, and a rejected password is refused locally for a while), so the exposure is: **anyone who can reach the bridge and has a login in that domain may try
-passwords through it**, rate limited per login but not per source. [SECURITY-MODEL.md](SECURITY-MODEL.md#who-can-sign-in-through-easbridge) says so plainly, and INSTALL.md repeats it next to the example.
+passwords through it**, rate limited per login and, since the pre-release review, to 10 unverified names per source address in 10 minutes. [SECURITY-MODEL.md](SECURITY-MODEL.md#who-can-sign-in-through-easbridge) says so plainly, and INSTALL.md repeats it next to the example.
 
 ## 4. The image's `/data`
 

@@ -101,7 +101,7 @@ Every setting, the TLS modes, how to hand the CA to MailFlow and how to run the 
 
 - No calendar, tasks or notes, and contacts are read only.
 - Drafts that the client saves live only in EASBridge, not on Exchange.
-- COPY is refused (EAS has no copy); MOVE works. There is no server-side search, SEARCH runs over the local cache.
+- COPY is refused (EAS has no copy); MOVE works. There is no server-side search; SEARCH runs over the local cache.
 - Widening `EASBRIDGE_FILTER` after the first sync brings older mail in as new messages. Choose the window before the first start.
 - A database migrated by a newer version cannot be opened by an older one. Copy the data directory before you upgrade.
 
@@ -135,7 +135,7 @@ strategy, the mutation checks and what the real server taught.
 ## Development
 
 ```sh
-source env.sh                    # project-local Go toolchain and caches
+source env.sh                    # picks the Go to use (EASBRIDGE_GOROOT, .toolchain/go or the go on PATH); caches stay in .cache
 make check                       # vet, tests (plain and -tags devfake), vendored go-activesync tests, production-binary check
 make e2e                         # the Docker end-to-end run (skips without Docker)
 make compat                      # imapflow 1.7.8 / nodemailer 10.0.13 and MailFlow 3.9.0's CardDAV client against a local devfake bridge (needs node, npm and, once, the network)
@@ -143,17 +143,17 @@ make build                       # bin/easbridge (production, no fake upstream)
 make vulncheck                   # known vulnerabilities in the dependencies: scripts/govulncheck.sh, pinned govulncheck
 ```
 
-- `scripts/govulncheck.sh` runs the pinned `govulncheck` with the project-local toolchain and caches (only the Go module proxy and
+- `scripts/govulncheck.sh` runs the pinned `govulncheck` with the Go that env.sh picks and the caches in `.cache` (only the Go module proxy and
   `vuln.go.dev` are contacted). It must report that your code is affected by 0 vulnerabilities. It also lists vulnerabilities in
   required modules that the code does not call. Run it before every release; to move to a newer tool, change `GOVULNCHECK_VERSION` in
   the script. CI runs `make check`, `make compat`, `make e2e` and `make vulncheck` on every push; they must stay green on `main`.
 - Build tag `devfake` compiles an in-memory fake Exchange (`internal/fakeupstream`) and a loopback control API into the binary. It is
   for tests and the compatibility harness only; the production build and the image do not contain it (`make check-prod` verifies this).
-- Layout: `cmd/easbridge`, `internal/{config,logx,store,engine,upstream,easupstream,fakeupstream,imapd,smtpd,carddav,vcard,mimeutil,mimestruct,auth}`,
+- Layout: `cmd/easbridge`, `internal/{config,logx,store,engine,upstream,easupstream,fakeupstream,imapd,smtpd,carddav,vcard,tlsauto,install,mimeutil,mimestruct,auth}`,
   `third_party/go-activesync` (vendored v1.1.0 with fifteen documented patches), `compat/` (Node harness; it also runs MailFlow
   3.9.0's CardDAV client, fetched at test time into a git-ignored cache and checked against pinned SHA-256 sums).
 - [docs/DESIGN.md](docs/DESIGN.md) is the specification ([docs/DESIGN-contacts.md](docs/DESIGN-contacts.md) for contacts);
-  [docs/TESTING.md](docs/TESTING.md) records status, deviations, known gaps and how to resume. See [CONTRIBUTING.md](CONTRIBUTING.md)
+  [docs/TESTING.md](docs/TESTING.md) describes how EASBridge is tested and what a real Exchange taught it. See [CONTRIBUTING.md](CONTRIBUTING.md)
   before you open a pull request.
 
 ## Licence

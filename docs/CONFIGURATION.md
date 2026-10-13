@@ -54,7 +54,7 @@ How these combine is explained in [TLS](#tls-which-certificate-do-the-listeners-
 | Variable | Default | Meaning |
 |---|---|---|
 | `EASBRIDGE_TLS_CERT` / `EASBRIDGE_TLS_KEY` | (unset; files at `/tls/server.pem` and `/tls/server-key.pem` count as given) | Your own certificate and key (provided mode, used as they are). Both or neither. With neither and no files at the default paths EASBridge makes its own |
-| `EASBRIDGE_TLS_NAMES` | (unset) | Comma-separated extra names of the automatic server certificate: DNS names, or IP addresses. Always included: `easbridge`, the host name, `EASBRIDGE_LISTEN_IP`, the container's addresses |
+| `EASBRIDGE_TLS_NAMES` | (unset) | Comma-separated extra names of the automatic server certificate: DNS names, or IP addresses. Always included: `easbridge` and `EASBRIDGE_LISTEN_IP`. The host name and the container's addresses are added when the CA permits them (see [TLS](#tls-which-certificate-do-the-listeners-use)) |
 | `EASBRIDGE_CA_EXPORT_DIR` | (unset) | Directory (a volume) that receives a copy of the automatic CA certificate as `ca.pem`, for MailFlow's `NODE_EXTRA_CA_CERTS`. Compose: `/ca` |
 
 ### State, logs and limits
