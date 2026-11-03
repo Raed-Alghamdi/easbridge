@@ -18,7 +18,7 @@
 
 # The build stage runs on the machine that builds (BUILDPLATFORM) and cross-compiles for the image's platform
 # (TARGETARCH): an arm64 image is built by a native amd64 Go, not by Go under emulation.
-FROM --platform=$BUILDPLATFORM golang:1.27.2@sha256:5bc7f572bbaa98885a3a1fd9c0aa76b59e3e14e8628bfc316bbfd0c701e4818c AS build
+FROM --platform=$BUILDPLATFORM golang:1.27.3@sha256:2920bb124f1a2e12a1d39f0cab756ae0068441ee1da7655dec7f5e374944095b AS build
 WORKDIR /src
 # Dependencies first, for layer caching. The vendored go-activesync is a
 # replace target, so it must exist before `go mod download`.
