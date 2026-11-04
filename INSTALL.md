@@ -41,7 +41,7 @@ Then plain `docker compose up -d`, `docker compose logs easbridge` and so on wor
 **1. Write the two files.**
 
 ```sh
-IMAGE=ghcr.io/raed-alghamdi/easbridge:0.3.0     # the published image
+IMAGE=ghcr.io/raed-alghamdi/easbridge:0.3.1     # the published image
 docker run --rm -it --user "$(id -u):$(id -g)" -v "$PWD:/out" "$IMAGE" init
 ```
 

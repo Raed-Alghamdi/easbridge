@@ -1,7 +1,7 @@
 # EASBridge build helpers. Every target loads the project-local Go toolchain.
 SHELL := /bin/bash
 ENV   := export EASBRIDGE_ENV_QUIET=1; source $(CURDIR)/env.sh
-VERSION ?= 0.3.0
+VERSION ?= 0.3.1
 # IMAGE changes where `easbridge init` says the image lives (internal/version.Image) for this build.
 IMAGE ?=
 LDFLAGS := -s -w -X easbridge/internal/version.Version=$(VERSION) $(if $(IMAGE),-X easbridge/internal/version.Image=$(IMAGE))

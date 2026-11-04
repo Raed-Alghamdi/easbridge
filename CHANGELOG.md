@@ -2,6 +2,26 @@
 
 All notable changes to EASBridge. The format follows Keep a Changelog; versions follow semantic versioning.
 
+## [0.3.1] - 2026-11-04
+
+A rebuild with Go 1.27.3 and newer dependencies. Behaviour, configuration and the database are unchanged.
+
+### Security
+
+- **Built with Go 1.27.3**, which fixes GO-2026-6809 in Go 1.27.2 and earlier: `crypto/x509` now refuses the known compromised
+  intermediate certificates when it verifies a chain. EASBridge verifies the Exchange server's certificate on every connection, and
+  `govulncheck` reports that the 0.3.0 binary calls the affected code. Upgrading is the only step needed.
+
+### Changed
+
+- `modernc.org/sqlite` 1.60.1 to 1.61.1, which brings SQLite 3.54.1 for the state database.
+- The release workflow uses `docker/login-action` 4.7.0 (was 4.6.0).
+
+### Upgrading
+
+Change the image tag to `0.3.1` and recreate the container. The database schema is still 8 and there is no migration, so going back to
+0.3.0 works.
+
 ## [0.3.0] - first public release
 
 A normal install now needs two values, the ActiveSync URL and the login. The design is in `docs/DESIGN-v0.3.md`.

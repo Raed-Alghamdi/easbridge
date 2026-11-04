@@ -47,7 +47,7 @@ Already running MailFlow with Docker Compose? Run these in the folder that holds
 MailFlow:
 
 ```sh
-IMAGE=ghcr.io/raed-alghamdi/easbridge:0.3.0     # the published image
+IMAGE=ghcr.io/raed-alghamdi/easbridge:0.3.1     # the published image
 docker run --rm -it --user "$(id -u):$(id -g)" -v "$PWD:/out" "$IMAGE" init
 docker compose -f docker-compose.yml -f docker-compose.easbridge.yml up -d
 ```

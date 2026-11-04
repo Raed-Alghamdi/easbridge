@@ -3,7 +3,7 @@
 package version
 
 // Version is the EASBridge release.
-var Version = "0.3.0"
+var Version = "0.3.1"
 
 // UserAgent returns the default HTTP User-Agent for EAS requests.
 func UserAgent() string { return "easbridge/" + Version }
