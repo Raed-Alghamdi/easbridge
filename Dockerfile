@@ -2,16 +2,17 @@
 #
 # easbridge: IMAP/SMTP in front of Exchange ActiveSync.
 #
-#   docker build -t local/easbridge:0.3.0 --build-arg VERSION=0.3.0 .
+#   docker build -t local/easbridge:0.3.1 --build-arg VERSION=0.3.1 .
 #
 # Static binary (CGO off, no libc), distroless nonroot runtime, no shell.
 #
 # Everything the build pulls is pinned by digest (the multi-architecture index), so
 # that a rebuild cannot silently pick up other bytes than the ones that were
 # reviewed: the BuildKit frontend named on the first line (docker/dockerfile 1.27.1),
-# the builder (golang 1.27.2, the Go release the project-local toolchain uses) and the
+# the builder (golang 1.27.3, the Go release the project-local toolchain uses) and the
 # runtime (distroless static-debian12:nonroot). The tag in front of each digest only
-# says what it was on 2026-10-09. To update, look up the digest of the new tag
+# says what it was when it was pinned (golang 1.27.3 on 2026-11-04, the others on
+# 2026-10-09). To update, look up the digest of the new tag
 # (`docker buildx imagetools inspect <image>:<tag>`, or a GET of its manifest at the
 # registry) and change it here in a commit of its own, together with go.mod if the
 # Go release changes.
@@ -26,7 +27,7 @@ COPY go.mod go.sum ./
 COPY third_party ./third_party
 RUN go mod download
 COPY . .
-ARG VERSION=0.3.0
+ARG VERSION=0.3.1
 # IMAGE overrides where `easbridge init` says the image lives (internal/version.Image); empty keeps
 # the default in the source. GOTAGS is empty for the real image: the production binary cannot contain
 # the fake upstream. `make e2e` builds a test image with GOTAGS=devfake; never publish that one.
